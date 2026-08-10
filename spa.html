@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QA Testbed — SPA</title>
+  <title>Aurora Goods — SPA</title>
 
-  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
   <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
 
   <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
@@ -14,7 +14,7 @@
 </head>
 <body>
   <nav class="nav">
-    <span class="brand">QA Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -25,14 +25,14 @@
 
   <main class="container">
     <section class="hero">
-      <h1 id="spa-title">SPA behavior</h1>
-      <p>Client-side routing with history.pushState (no full reload).</p>
+      <h1 id="spa-title">Single-page navigation</h1>
+      <p>Client-side routing via the URL hash (no full page reload).</p>
 
-      <!-- SPA nav: links call route() which pushState + swaps #view innerHTML.
-           Tests SPA activation / re-activation and immediate-activation mismatch. -->
+      <!-- Hash-based routes. These never 404, even when the site is served
+           from a subpath, because the hash is not sent to the server. -->
       <nav>
-        <a href="#/home" onclick="route('/home'); return false;" class="btn btn-secondary">#/home</a>
-        <a href="#/details" onclick="route('/details'); return false;" class="btn btn-secondary">#/details</a>
+        <a href="#/home" class="btn btn-secondary">#/home</a>
+        <a href="#/details" class="btn btn-secondary">#/details</a>
       </nav>
     </section>
 
@@ -52,34 +52,32 @@
   </footer>
 
   <script>
-    // Client-side router: swaps innerHTML of #view via history.pushState (no reload).
-    // Then injects a #late-el after a delay to test re-activation timing.
-    function route(path) {
+    // Hash-based client-side router: swaps innerHTML of #view without a reload.
+    // Using the URL hash keeps routes working under any subpath.
+    function render(route) {
       var view = document.getElementById('view');
-      history.pushState({ path: path }, '', path);
-      if (path === '/details') {
-        view.innerHTML = '<h3 id="details-heading">Details route</h3>' +
-                         '<p>Rendered client-side. No full page load happened.</p>' +
-                         '<div id="late-slot">Waiting for late element…</div>';
-      } else {
-        view.innerHTML = '<h3 id="home-heading">Home route</h3>' +
-                         '<p>Rendered client-side. No full page load happened.</p>' +
-                         '<div id="late-slot">Waiting for late element…</div>';
-      }
-      // Late injection after route render (immediate-activation mismatch scenario).
+      var heading = route === '/details'
+        ? '<h3 id="details-heading">Details route</h3>'
+        : '<h3 id="home-heading">Home route</h3>';
+      view.innerHTML = heading +
+        '<p>Rendered client-side. No full page load happened.</p>' +
+        '<div id="late-slot">Loading…</div>';
+      // Content injected shortly after the route renders.
       setTimeout(function () {
         var slot = document.getElementById('late-slot');
-        if (slot) slot.innerHTML = '<span id="late-el">late</span>';
+        if (slot) slot.innerHTML = '<span id="late-el">Loaded</span>';
       }, 1200);
     }
 
-    // Support back/forward navigation.
-    window.addEventListener('popstate', function (e) {
-      route((e.state && e.state.path) || '/home');
-    });
+    function currentRoute() {
+      return location.hash === '#/details' ? '/details' : '/home';
+    }
+
+    // Re-render on hash change (covers link clicks and back/forward).
+    window.addEventListener('hashchange', function () { render(currentRoute()); });
 
     // Initial render.
-    route(location.pathname.indexOf('/details') !== -1 ? '/details' : '/home');
+    render(currentRoute());
   </script>
 </body>
 </html>

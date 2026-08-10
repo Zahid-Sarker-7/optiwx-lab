@@ -3,24 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Optly Testbed — Consent / CMP</title>
+  <title>Aurora Goods — Consent</title>
 
-  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
   <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
 
   <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script>
 
-       CMP TEST NOTE: In a real consent-gated setup you would NOT hardcode the
-       snippet here. You would hold Optimizely (via holdEvents / disabling the
-       snippet, or a Custom Snippet that waits) until the visitor accepts, then
-       release it. This page mocks that gate so a QA run can check whether the
-       experiment activates or events fire BEFORE consent is granted. -->
+       CONSENT NOTE: In a real consent-gated setup you would typically hold the
+       snippet (or its events) until the visitor accepts, then release it. This
+       page mocks that gate so you can see how a page behaves before and after
+       consent is granted. -->
 
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="nav">
-    <span class="brand">Optly Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -32,15 +31,14 @@
   <main class="container">
     <section class="hero">
       <h1 id="consent-title">Consent-gated page</h1>
-      <p>Analytics/experimentation should stay dormant until consent is accepted.</p>
-      <!-- Reads the mock consent state so QA can see current status. -->
+      <p>Analytics and experimentation stay dormant until consent is accepted.</p>
+      <!-- Shows the current mock consent state. -->
       <p>Consent status: <strong id="consent-status">pending</strong></p>
     </section>
 
     <section class="section">
       <h2>Gated action</h2>
-      <!-- Firing events before consent = a finding. This button pushes an event
-           only if consent has been granted (see gate logic below). -->
+      <!-- This button pushes an event only after consent has been granted. -->
       <button id="gated-evt" class="btn btn-primary">Fire event (only if consented)</button>
     </section>
 
@@ -53,7 +51,7 @@
     </div>
   </footer>
 
-  <!-- Mock CMP banner (starts visible, blocks the page until a choice is made) -->
+  <!-- Mock consent banner (starts visible until a choice is made) -->
   <div id="cmp-banner" class="cmp-banner" role="dialog" aria-live="polite">
     <span>We use cookies for experimentation &amp; analytics.</span>
     <button id="cmp-accept" class="btn btn-primary">Accept</button>
@@ -61,9 +59,7 @@
   </div>
 
   <script>
-    // Mock CMP. window.__consent gates whether analytics/experimentation may run.
-    // A QA agent should verify Optimizely activation + events do NOT fire while
-    // window.__consent !== 'granted'.
+    // Mock consent state. window.__consent gates whether analytics/experimentation runs.
     window.__consent = 'pending';
 
     function setConsent(state) {
@@ -71,9 +67,7 @@
       document.getElementById('consent-status').textContent = state;
       document.getElementById('cmp-banner').style.display = 'none';
       if (state === 'granted') {
-        // Only NOW would you release Optimizely, e.g.:
-        // window.optimizely = window.optimizely || [];
-        // window.optimizely.push({ type: 'activate' });
+        // Only after consent would you release Optimizely / send events.
         window.optimizely = window.optimizely || [];
         window.optimizely.push({ type: 'event', eventName: 'consent_granted' });
       }
@@ -84,7 +78,7 @@
 
     document.getElementById('gated-evt').onclick = function () {
       if (window.__consent !== 'granted') {
-        alert('Blocked: no consent yet (this is the correct behavior).');
+        alert('Blocked: no consent yet.');
         return;
       }
       window.optimizely = window.optimizely || [];

@@ -1,25 +1,23 @@
-// mock-gtm.js — a stand-in for a third-party tag (Google Tag Manager,
-// a personalization tool, a chat widget, etc.) that MUTATES the same DOM
-// elements an Optimizely experiment might target.
+// mock-gtm.js — a stand-in for a third-party tag (a tag manager, a
+// personalization tool, a chat widget, etc.) that updates the same DOM
+// elements a page experiment might also change.
 //
-// Purpose: exercise the "detect third-party tools mutating the same elements"
-// check. It fights over #hero-title and #tp-target after the page loads, so a
-// QA run should notice ownership churn / a potential visual conflict.
+// It updates #hero-title and #tp-target shortly after the page loads, which is
+// handy for seeing how a page behaves when more than one script touches the
+// same elements.
 (function () {
-  function mutate() {
+  function update() {
     var hero = document.getElementById('hero-title');
     if (hero) {
       hero.setAttribute('data-mutated-by', 'mock-gtm');
-      // Deliberately overwrites text an experiment may also change.
       hero.textContent = hero.textContent + ' ✨'; // append a sparkle
     }
     var tp = document.getElementById('tp-target');
     if (tp) {
       tp.setAttribute('data-owner', 'mock-gtm');
-      tp.textContent = 'Mutated by mock-gtm at ' + new Date().toISOString();
+      tp.textContent = 'Updated by mock-gtm at ' + new Date().toISOString();
     }
   }
-  // Runs ~800ms after load — after the snippet's first pass, to simulate a
-  // late third-party mutation that can clobber or race an Optimizely change.
-  setTimeout(mutate, 800);
+  // Runs ~800ms after load, simulating a late third-party update.
+  setTimeout(update, 800);
 })();

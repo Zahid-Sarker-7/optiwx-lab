@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QA Testbed — Home</title>
+  <title>Aurora Goods — Home</title>
 
-  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC (flash of original content). -->
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet, to prevent a flash of original content. -->
   <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
 
   <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
@@ -15,7 +15,7 @@
 <body>
   <!-- Shared top nav -->
   <nav class="nav">
-    <span class="brand">QA Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -27,88 +27,87 @@
   <main class="container">
     <!-- HERO -->
     <section class="hero">
-      <!-- Check: valid-selector (STABLE id) -->
-      <h1 id="hero-title">Ship experiments with confidence</h1>
-      <p>A tiny, real-feeling site built to exercise every Optimizely Web QA check.</p>
+      <!-- Heading with a stable id -->
+      <h1 id="hero-title">Everyday gear, thoughtfully made</h1>
+      <p>A small demo storefront with a mix of page elements for building and testing experiments.</p>
 
-      <!-- Check: valid-selector (STABLE data-testid + class) -->
+      <!-- Primary call-to-action with a stable data-testid and class -->
       <a data-testid="hero-cta" class="btn btn-primary" href="product.html">Shop the product</a>
 
-      <!-- Check: flicker on image swap (above-the-fold big image) -->
+      <!-- Large above-the-fold banner image -->
       <img id="hero-img" class="hero-img" src="https://picsum.photos/2000/800" width="100%" alt="Hero banner">
     </section>
 
-    <!-- SELECTOR FRAGILITY -->
+    <!-- FEATURED -->
     <section class="section">
-      <h2>Selector fragility</h2>
+      <h2>Featured</h2>
 
-      <!-- Check: fragility warning (hashed-looking generated class) -->
-      <button class="sc-1a2b3c4">Fragile hashed-class button</button>
+      <!-- A button whose class name looks auto-generated (hashed) -->
+      <button class="sc-1a2b3c4">Auto-generated class button</button>
 
-      <!-- Check: nth-child fragility (deeply nested, no stable hook) -->
+      <!-- A deeply nested block with no stable hook on the inner element -->
       <section class="nested">
         <div>
           <div>
-            <span>Deeply nested target (only reachable via nth-child)</span>
+            <span>Deeply nested label</span>
           </div>
         </div>
       </section>
     </section>
 
-    <!-- DEVICE MATRIX -->
+    <!-- DESKTOP HIGHLIGHTS -->
     <section class="section">
-      <h2>Device matrix</h2>
-      <!-- Check: device-matrix no-op (hidden on mobile via CSS media query) -->
+      <h2>Desktop highlights</h2>
+      <!-- Banner shown only on desktop; hidden under 640px via CSS -->
       <div class="desktop-only">Desktop-only banner (display:none under 640px)</div>
     </section>
 
-    <!-- EVENTS -->
+    <!-- ACTIONS -->
     <section class="section">
-      <h2>Events</h2>
+      <h2>Actions</h2>
 
-      <!-- Check: click-event target -->
+      <!-- Simple clickable button -->
       <button id="cta-click" data-testid="cta-click" class="btn btn-secondary">Track this click</button>
 
-      <!-- Check: custom-event (pushes an Optimizely custom event) -->
+      <!-- Button that pushes an Optimizely custom event -->
       <button id="custom-evt" class="btn btn-secondary"
         onclick="window.optimizely = window.optimizely || []; window.optimizely.push({ type: 'event', eventName: 'custom_demo_event' });">
         Fire custom_demo_event
       </button>
     </section>
 
-    <!-- LATE-INJECTED ELEMENT -->
+    <!-- DYNAMIC CONTENT -->
     <section class="section">
-      <h2>Late-injected element</h2>
-      <!-- Check: late-injected element (selector timing / SPA-like) -->
-      <div id="late-slot">Waiting for late element…</div>
+      <h2>Recommended for you</h2>
+      <!-- Slot filled by script ~1.5s after load -->
+      <div id="late-slot">Loading recommendations…</div>
     </section>
 
-    <!-- CONVERSION / GOAL -->
+    <!-- NEWSLETTER -->
     <section class="section">
       <h2>Sign up</h2>
-      <!-- Check: conversion/goal (form submit) -->
+      <!-- Simple email sign-up form -->
       <form id="signup" onsubmit="return false;">
         <input type="email" name="email" placeholder="you@example.com" required>
         <button type="submit" class="btn btn-primary">Sign up</button>
       </form>
     </section>
 
-    <!-- ACCESSIBILITY (suggestion-level checks on changed elements) -->
+    <!-- GALLERY -->
     <section class="section" id="a11y">
-      <h2>Accessibility targets</h2>
-      <!-- a11y: image target MISSING alt attribute -->
+      <h2>Gallery</h2>
+      <!-- Image without an alt attribute -->
       <img id="a11y-img" src="https://picsum.photos/400/200" width="400">
-      <!-- a11y: low-contrast button (light grey text on white) -->
+      <!-- Button with light-grey text on white (low contrast) -->
       <button id="low-contrast" class="btn low-contrast">Low-contrast CTA</button>
-      <!-- a11y: input WITHOUT an associated label -->
-      <p><input id="unlabeled" type="text" placeholder="Unlabeled input"></p>
+      <!-- Text input with no associated label -->
+      <p><input id="unlabeled" type="text" placeholder="Search products"></p>
     </section>
 
-    <!-- THIRD-PARTY MUTATION: a mock GTM/personalization tag mutates #hero-title
-         after load — tests conflict detection between Optimizely and other tools. -->
+    <!-- ANNOUNCEMENTS: a separate script (mock-gtm.js) updates this text after load. -->
     <section class="section" id="thirdparty">
-      <h2>Third-party mutation</h2>
-      <p id="tp-target" data-owner="none">This text is mutated by mock-gtm.js after load.</p>
+      <h2>Announcements</h2>
+      <p id="tp-target" data-owner="none">This text is updated by mock-gtm.js after load.</p>
     </section>
 
     <!-- Spacer keeps the footer below the fold -->
@@ -117,20 +116,20 @@
 
   <footer class="footer">
     <div class="container">
-      <!-- Check: flicker-not-relevant control (below the fold) -->
-      <p id="footer-note">Footer note — below the fold, flicker here should not be flagged.</p>
+      <!-- Note that sits below the fold -->
+      <p id="footer-note">Footer note — below the fold.</p>
     </div>
   </footer>
 
-  <!-- Late-injection: fills #late-slot after 1500ms with #late-el (tests selector timing) -->
+  <!-- Fills #late-slot ~1.5s after load with #late-el -->
   <script>
     setTimeout(function () {
       var slot = document.getElementById('late-slot');
-      if (slot) slot.innerHTML = '<span id="late-el">late</span>';
+      if (slot) slot.innerHTML = '<span id="late-el">Handpicked for you</span>';
     }, 1500);
   </script>
 
-  <!-- Mock third-party tag (GTM/personalization) that mutates shared elements. -->
+  <!-- A separate script that updates shared elements after load. -->
   <script src="mock-gtm.js"></script>
 </body>
 </html>

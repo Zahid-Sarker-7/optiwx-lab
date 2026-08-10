@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QA Testbed — CSP</title>
+  <title>Aurora Goods — CSP</title>
 
-  <!-- This page tests CSP handling: a strict Content-Security-Policy can block
-       injected scripts, inline handlers, and websockets used by the visual editor.
-       If Optimizely changes fail here but pass on index.html, suspect CSP. -->
+  <!-- This page has a strict Content-Security-Policy. A strict CSP can block
+       injected scripts, inline handlers, and some connections. If page changes
+       behave differently here than on the Home page, the CSP is a likely cause. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.optimizely.com; img-src 'self' https://picsum.photos data:; style-src 'self' 'unsafe-inline';">
 
-  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
   <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
 
   <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
@@ -19,7 +19,7 @@
 </head>
 <body>
   <nav class="nav">
-    <span class="brand">QA Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -30,32 +30,32 @@
 
   <main class="container">
     <section class="hero">
-      <!-- Same structure as index.html, but under a strict CSP -->
-      <h1 id="hero-title">Ship experiments with confidence</h1>
+      <!-- Same structure as the Home page, but under a strict CSP -->
+      <h1 id="hero-title">Everyday gear, thoughtfully made</h1>
       <p>Identical to Home, but served with a strict Content-Security-Policy.</p>
       <a data-testid="hero-cta" class="btn btn-primary" href="product.html">Shop the product</a>
       <img id="hero-img" class="hero-img" src="https://picsum.photos/2000/800" width="100%" alt="Hero banner">
     </section>
 
     <section class="section">
-      <h2>Selector fragility</h2>
-      <button class="sc-1a2b3c4">Fragile hashed-class button</button>
+      <h2>Featured</h2>
+      <button class="sc-1a2b3c4">Auto-generated class button</button>
       <section class="nested">
         <div>
           <div>
-            <span>Deeply nested target (only reachable via nth-child)</span>
+            <span>Deeply nested label</span>
           </div>
         </div>
       </section>
     </section>
 
     <section class="section">
-      <h2>Device matrix</h2>
+      <h2>Desktop highlights</h2>
       <div class="desktop-only">Desktop-only banner (display:none under 640px)</div>
     </section>
 
     <section class="section">
-      <h2>Events</h2>
+      <h2>Actions</h2>
       <button id="cta-click" data-testid="cta-click" class="btn btn-secondary">Track this click</button>
       <!-- Note: inline onclick may be blocked under this CSP (no 'unsafe-inline' in script-src). -->
       <button id="custom-evt" class="btn btn-secondary"
@@ -65,8 +65,8 @@
     </section>
 
     <section class="section">
-      <h2>Late-injected element</h2>
-      <div id="late-slot">Waiting for late element…</div>
+      <h2>Recommended for you</h2>
+      <div id="late-slot">Loading recommendations…</div>
     </section>
 
     <section class="section">
@@ -86,8 +86,8 @@
     </div>
   </footer>
 
-  <!-- NOTE: this external script is allowed by script-src 'self'.
-       If you inline this instead, the strict CSP will block it. -->
+  <!-- This external script is allowed by script-src 'self'.
+       If you inline it instead, the strict CSP will block it. -->
   <script src="late-inject.js"></script>
 </body>
 </html>

@@ -1,71 +1,73 @@
-# Optimizely Web Testbed
+# Aurora Goods — Optimizely demo storefront
 
-A tiny, self-contained static site for testing **Optimizely Web** (and a page for
-**Feature Experimentation / FX**) experiments end to end. It's a generic
-"Optimizely page with an injectable snippet" you can point any experiment at —
-useful for QA, demos, snippet/preview learning, or reproducing edge cases.
+A tiny, self-contained static website for a fictional brand, **Aurora Goods**.
+It's a demo storefront with a deliberate mix of page elements and scenarios —
+handy for building and testing **Optimizely Web Experimentation** experiments and
+**Optimizely Feature Experimentation (FX)** flags.
 
 No build step, no server, no runtime dependencies beyond the Optimizely snippet
-you paste in and (optionally) Playwright for the probe.
+you paste in and (optionally) Playwright for the read-only probe.
 
-## What's here
-| File | Purpose |
-|------|---------|
-| `index.html` | Home — hero, stable + fragile selectors, events, late injection, a11y + third-party sections |
-| `product.html` | Second page — URL targeting, page events, funnel step 1 |
-| `checkout.html` | Funnel end — revenue button with a parseable `data-revenue` value |
-| `spa.html` | SPA — `history.pushState` routing, late-injected element |
-| `csp.html` | Home clone under a strict `Content-Security-Policy` meta |
-| `consent.html` | Mock CMP banner that gates experimentation/events until accepted |
-| `redirect-target.html` | Destination for redirect experiments (shows surviving query/UTMs) |
-| `fx.html` | FX JS SDK: `decide()`, forced-decision param, variables, revision |
-| `mock-gtm.js` | Stand-in third-party tag that mutates shared elements |
-| `late-inject.js` | External late-injection script for `csp.html` (inline blocked by CSP) |
-| `styles.css` | Minimal styling; pages kept tall so the footer is below the fold |
-| `probe.js` | Node + Playwright headless reader of snippet / FX / selectors |
+## Pages
+| File | What it is |
+|------|-----------|
+| `index.html` | Home — hero + CTA, a featured section, a desktop-only banner, action buttons, a dynamically loaded slot, a sign-up form, a small gallery, and an announcements line |
+| `product.html` | A second product page with its own heading and a path into the purchase flow |
+| `checkout.html` | Checkout — a purchase button carrying a parseable order value (demo only; no real payment) |
+| `spa.html` | Single-page navigation using hash routes (`#/home`, `#/details`) with no full reload |
+| `csp.html` | The Home layout served under a strict `Content-Security-Policy` |
+| `consent.html` | A mock consent banner that keeps analytics/experimentation dormant until accepted |
+| `redirect-target.html` | A landing page for redirect experiments that shows any preserved query params |
+| `fx.html` | Loads the Optimizely FX JavaScript SDK, runs `decide()`, and renders a variation |
+| `mock-gtm.js` | A stand-in third-party script that updates a couple of shared elements after load |
+| `late-inject.js` | Same-origin helper that adds an element on `csp.html` (inline scripts are CSP-blocked) |
+| `styles.css` | Minimal styling; pages are kept tall so the footer sits below the fold |
+| `probe.js` | Optional Node + Playwright script that reads Optimizely state from a page |
 
 ## 1. Deploy to GitHub Pages
 1. Push this folder to a GitHub repo.
 2. **Settings → Pages → Deploy from a branch → `main` / `/ (root)`**.
-3. Site: `https://<user>.github.io/<repo>/` (pages at `/index.html`, `/fx.html`, …). Pages is HTTPS, which the snippet requires.
+3. Your site appears at `https://<user>.github.io/<repo>/`. All links and assets are
+   relative, so the site works correctly under a project subpath. GitHub Pages is
+   HTTPS, which the Optimizely snippet requires.
 
-## 2. Paste your Optimizely snippet
+## 2. Add your Optimizely snippet
 - **Web:** copy your Web project's snippet and paste it into the
   `PASTE YOUR OPTIMIZELY WEB SNIPPET HERE` placeholder in the `<head>` of **every**
-  HTML page (synchronous, before `styles.css`). Optional hiding/anti-flicker
+  HTML page (synchronous, before `styles.css`). An optional hiding/anti-flicker
   snippet goes in the placeholder just above it.
-- Point each experiment's **URL Targeting** at the github.io URL(s) above.
-- **FX:** edit `fx.html` and set `SDK_KEY`, `FLAG_KEY`, `USER_ID` to your FX project's values.
+- Point each experiment's **URL Targeting** at your github.io URL(s).
+- **FX:** edit `fx.html` and set `SDK_KEY`, `FLAG_KEY`, and `USER_ID` to your project's values.
 
-## 3. Element / page → scenario
-| Page | Element | Scenario |
-|------|---------|----------|
-| index | `#hero-title`, `[data-testid=hero-cta]` | stable selectors |
-| index | `.sc-1a2b3c4` / nested `span` | fragile / nth-child selectors |
-| index | `#hero-img` vs `#footer-note` | flicker (above vs below fold) |
-| index | `.desktop-only` | device-matrix no-op (hidden < 640px) |
-| index | `#cta-click`, `#custom-evt`, `#signup` | click / custom event / conversion |
-| index | `#late-slot` → `#late-el` | late-injected element / selector timing |
-| index | `#a11y-img`, `#low-contrast`, `#unlabeled` | accessibility issues (alt, contrast, label) |
-| index | `#tp-target`, `#hero-title` + `mock-gtm.js` | third-party mutation / conflict |
-| product | `#product-title`, `#add-cart` | URL targeting + funnel step 1 |
-| checkout | `#buy` (`data-revenue`) | revenue value — **do not actually buy** |
-| spa | pushState routes + `#late-el` | SPA (re)activation timing |
-| csp | strict CSP meta | CSP blocking injected scripts / websockets |
-| consent | CMP banner, `window.__consent` | events firing before consent |
-| redirect-target | `#qp` | redirect target resolves, UTMs survive, no loop |
-| fx | `#fx-decision`, `#fx-variables`, `?optimizely_force=` | FX decide / forced decision / variables |
+## 3. Page features
+| Page | Element | Feature |
+|------|---------|---------|
+| index | `#hero-title`, `[data-testid=hero-cta]` | a heading and a hero CTA with stable hooks |
+| index | `.sc-1a2b3c4` / nested `span` | a button with an auto-generated class name; a deeply nested label |
+| index | `#hero-img` vs `#footer-note` | a large above-the-fold image; a below-the-fold note |
+| index | `.desktop-only` | a desktop-only banner (hidden under 640px) |
+| index | `#cta-click`, `#custom-evt`, `#signup` | a click button, a custom-event button, a sign-up form |
+| index | `#late-slot` → `#late-el` | a slot filled by script ~1.5s after load |
+| index | `#a11y-img`, `#low-contrast`, `#unlabeled` | an image without alt, a low-contrast button, an unlabeled input |
+| index | `#tp-target` + `mock-gtm.js` | text updated by a separate third-party-style script |
+| product | `#product-title`, `#add-cart` | a second-page heading and an add-to-cart button |
+| checkout | `#buy` (`data-revenue`) | a purchase button with a parseable order value (demo only) |
+| spa | hash routes + `#late-el` | client-side navigation without a reload |
+| csp | strict CSP meta | the same layout under a strict Content-Security-Policy |
+| consent | consent banner, `window.__consent` | actions gated until consent is accepted |
+| redirect-target | `#qp` | shows query params preserved through a redirect |
+| fx | `#fx-decision`, `#fx-variables`, `?optimizely_force=` | FX `decide()`, flag variables, forced decision |
 
 ## 4. Redirect & forcing quick notes
-- **Redirect experiment:** target `redirect-target.html`; enable "preserve query params" and confirm `utm_*` show under *Query parameters received*.
+- **Redirect experiment:** target `redirect-target.html`; enable "preserve query params" and confirm `utm_*` appear under *Query parameters received*.
 - **Force a Web variation:** append `?optimizely_x=<VARIATION_ID>`.
 - **Force an FX flag:** append `?optimizely_force=<FLAG_KEY>:<VARIATION_KEY>`.
 
-## 5. Run the probe
+## 5. Run the optional probe
 ```bash
 npm i -D playwright && npx playwright install chromium
 node probe.js "https://<user>.github.io/<repo>/index.html"
 ```
-Prints projectId, known/active experiments, variation map, selector counts,
-FX decision/variables/revision, third-party mutation ownership, consent state,
-and request timings (flicker reasoning).
+Prints the project id, known/active experiments, variation map, selector counts,
+FX decision/variables/revision, shared-element ownership, consent state, and
+request timings.

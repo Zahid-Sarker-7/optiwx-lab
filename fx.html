@@ -3,20 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Optly Testbed — Feature Experimentation (FX)</title>
+  <title>Aurora Goods — Feature Experimentation (FX)</title>
 
-  <!-- FX uses the JavaScript SDK, NOT the Web snippet. Loaded from a CDN below.
-       Replace the SDK key / datafile placeholders with your own FX project's. -->
+  <!-- Feature Experimentation uses the JavaScript SDK, not the Web snippet.
+       Loaded from a CDN below. Replace the SDK key placeholder with your own. -->
   <link rel="stylesheet" href="styles.css">
 
   <!-- Optimizely Feature Experimentation JS SDK (browser UMD build) via CDN.
-       Pinned to a MAJOR version so "flag known-bad / outdated SDK version" is
-       testable — bump/downgrade this to exercise the SDK-version check. -->
+       Pinned to a major version; change this to try a different SDK version. -->
   <script src="https://unpkg.com/@optimizely/optimizely-sdk@6/dist/optimizely.browser.umd.min.js"></script>
 </head>
 <body>
   <nav class="nav">
-    <span class="brand">Optly Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -33,7 +32,7 @@
 
     <section class="section">
       <h2>Decision</h2>
-      <!-- Rendered from decision.variationKey + variables (variable-validation). -->
+      <!-- Rendered from decision.variationKey and its variables. -->
       <div id="fx-decision">Initializing SDK…</div>
       <ul id="fx-variables"></ul>
       <p>Datafile revision: <strong id="fx-revision">?</strong>
@@ -43,13 +42,12 @@
     </section>
 
     <section class="section">
-      <h2>Hydration mismatch (simulated)</h2>
-      <!-- SIMULATED SSR/hydration mismatch: the "server" markup below says
-           "control", then client JS swaps it to the decided variation. On a real
-           SSR app this divergence is a hydration mismatch. TRUE SSR/hydration
-           testing needs a Next.js (or similar) host — GitHub Pages is static, so
-           this only *simulates* the class of bug for the QA pipeline. -->
-      <div id="ssr-slot" data-server-rendered="control">Server-rendered: control</div>
+      <h2>Client render</h2>
+      <!-- The markup below starts as one value, then client JS swaps it to the
+           decided variation. This is a client-only demo. Genuine server-side
+           rendering and hydration would require an SSR host (e.g. Next.js);
+           GitHub Pages serves static files, so this only mimics the pattern. -->
+      <div id="ssr-slot" data-server-rendered="control">Initial: control</div>
     </section>
 
     <div class="spacer" aria-hidden="true"></div>
@@ -65,12 +63,11 @@
     // ---- CONFIG (placeholders — replace with your FX project's values) ------
     var SDK_KEY = 'YOUR_FX_SDK_KEY';     // SDK fetches datafile from cdn.optimizely.com/datafiles/<SDK_KEY>.json
     var FLAG_KEY = 'demo_flag';          // the flag to decide()
-    var USER_ID  = 'qa-visitor-001';     // stable id => consistent bucketing across pages/subdomains
+    var USER_ID  = 'demo-visitor-001';   // stable id => consistent bucketing
 
     // ---- FORCED-DECISION QUERY-PARAM HANDLER --------------------------------
     // Reads ?optimizely_force=flag_key:variation_key and applies it via
-    // setForcedDecision() BEFORE decide(). This is the documented handler the
-    // QA agent looks for; if absent it should degrade gracefully with a finding.
+    // setForcedDecision() BEFORE decide(). If absent, decide() runs normally.
     function parseForcedDecision() {
       var raw = new URLSearchParams(location.search).get('optimizely_force');
       if (!raw || raw.indexOf(':') === -1) return null;
@@ -81,12 +78,10 @@
     function render(text) { document.getElementById('fx-decision').textContent = text; }
 
     if (!window.optimizelySdk) {
-      // Default/fallback experience when the SDK fails to load (CDN blocked, etc.)
+      // Fallback experience when the SDK fails to load (e.g. CDN blocked).
       render('SDK failed to load — showing fallback (control) experience.');
     } else {
-      document.getElementById('fx-sdk-version').textContent =
-        (window.optimizelySdk.__internalResetState ? '' : '') ||
-        (window.optimizelySdk.enums ? 'loaded' : 'loaded');
+      document.getElementById('fx-sdk-version').textContent = 'loaded';
 
       var client = window.optimizelySdk.createInstance({ sdkKey: SDK_KEY });
 
@@ -109,7 +104,7 @@
                  ', variation=' + decision.variationKey +
                  (forced ? ' (FORCED)' : ''));
 
-          // Variable validation: expose string/number/json variable values.
+          // Expose string/number/json variable values.
           var vars = decision.variables || {};
           var ul = document.getElementById('fx-variables');
           Object.keys(vars).forEach(function (k) {
@@ -118,15 +113,15 @@
             ul.appendChild(li);
           });
 
-          // Datafile freshness: current revision on the page vs stale CDN cache.
+          // Datafile revision currently loaded on the page.
           var cfg = client.getOptimizelyConfig && client.getOptimizelyConfig();
           document.getElementById('fx-revision').textContent =
             (cfg && cfg.revision) ? cfg.revision : 'unavailable';
 
-          // Simulated hydration mismatch: swap the "server" markup to the variation.
+          // Swap the initial markup to the decided variation (client-side).
           var slot = document.getElementById('ssr-slot');
           if (slot && decision.variationKey) {
-            slot.textContent = 'Client-hydrated: ' + decision.variationKey;
+            slot.textContent = 'Client-rendered: ' + decision.variationKey;
             slot.setAttribute('data-client-rendered', decision.variationKey);
           }
         } catch (e) {

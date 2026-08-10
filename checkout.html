@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QA Testbed — Checkout</title>
+  <title>Aurora Goods — Checkout</title>
 
-  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
   <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
 
   <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
@@ -14,7 +14,7 @@
 </head>
 <body>
   <nav class="nav">
-    <span class="brand">QA Testbed</span>
+    <span class="brand">Aurora Goods</span>
     <a href="index.html">Home</a>
     <a href="product.html">Product</a>
     <a href="checkout.html">Checkout</a>
@@ -24,7 +24,7 @@
   </nav>
 
   <main class="container">
-    <!-- Funnel END: this page is the final conversion step. -->
+    <!-- Final step of the demo purchase flow. -->
     <section class="hero">
       <h1 id="checkout-title">Checkout</h1>
       <p>Review your order and complete your purchase.</p>
@@ -34,9 +34,10 @@
       <h2>Order summary</h2>
       <p>1 × The Product — $49.99</p>
 
-      <!-- Revenue-value validation: data-revenue is a parseable, non-zero value
-           (dollars). Optimizely revenue is usually tracked in CENTS (4999).
-           QA agent must SKIP actually triggering this (revenue) and note it. -->
+      <!-- Purchase button carrying a parseable order value. data-revenue is in
+           dollars; data-revenue-cents is the same amount in cents (Optimizely
+           revenue is typically tracked in cents). This is a demo — the button
+           does not process a real payment. -->
       <button id="buy" class="btn btn-primary"
               data-revenue="49.99" data-revenue-cents="4999" data-currency="USD">
         Buy ($49.99)
