@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Testbed — SPA</title>
+
+  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">QA Testbed</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1 id="spa-title">SPA behavior</h1>
+      <p>Client-side routing with history.pushState (no full reload).</p>
+
+      <!-- SPA nav: links call route() which pushState + swaps #view innerHTML.
+           Tests SPA activation / re-activation and immediate-activation mismatch. -->
+      <nav>
+        <a href="#/home" onclick="route('/home'); return false;" class="btn btn-secondary">#/home</a>
+        <a href="#/details" onclick="route('/details'); return false;" class="btn btn-secondary">#/details</a>
+      </nav>
+    </section>
+
+    <section class="section">
+      <h2>View</h2>
+      <!-- #view is swapped WITHOUT a page reload -->
+      <main id="view"><p>Pick a route above.</p></main>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Client-side router: swaps innerHTML of #view via history.pushState (no reload).
+    // Then injects a #late-el after a delay to test re-activation timing.
+    function route(path) {
+      var view = document.getElementById('view');
+      history.pushState({ path: path }, '', path);
+      if (path === '/details') {
+        view.innerHTML = '<h3 id="details-heading">Details route</h3>' +
+                         '<p>Rendered client-side. No full page load happened.</p>' +
+                         '<div id="late-slot">Waiting for late element…</div>';
+      } else {
+        view.innerHTML = '<h3 id="home-heading">Home route</h3>' +
+                         '<p>Rendered client-side. No full page load happened.</p>' +
+                         '<div id="late-slot">Waiting for late element…</div>';
+      }
+      // Late injection after route render (immediate-activation mismatch scenario).
+      setTimeout(function () {
+        var slot = document.getElementById('late-slot');
+        if (slot) slot.innerHTML = '<span id="late-el">late</span>';
+      }, 1200);
+    }
+
+    // Support back/forward navigation.
+    window.addEventListener('popstate', function (e) {
+      route((e.state && e.state.path) || '/home');
+    });
+
+    // Initial render.
+    route(location.pathname.indexOf('/details') !== -1 ? '/details' : '/home');
+  </script>
+</body>
+</html>

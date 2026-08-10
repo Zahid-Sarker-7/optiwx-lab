@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Optly Testbed — Feature Experimentation (FX)</title>
+
+  <!-- FX uses the JavaScript SDK, NOT the Web snippet. Loaded from a CDN below.
+       Replace the SDK key / datafile placeholders with your own FX project's. -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Optimizely Feature Experimentation JS SDK (browser UMD build) via CDN.
+       Pinned to a MAJOR version so "flag known-bad / outdated SDK version" is
+       testable — bump/downgrade this to exercise the SDK-version check. -->
+  <script src="https://unpkg.com/@optimizely/optimizely-sdk@6/dist/optimizely.browser.umd.min.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Optly Testbed</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1 id="fx-title">Feature Experimentation</h1>
+      <p>Initializes the FX JS SDK, runs <code>decide()</code>, and renders a variation.</p>
+    </section>
+
+    <section class="section">
+      <h2>Decision</h2>
+      <!-- Rendered from decision.variationKey + variables (variable-validation). -->
+      <div id="fx-decision">Initializing SDK…</div>
+      <ul id="fx-variables"></ul>
+      <p>Datafile revision: <strong id="fx-revision">?</strong>
+         &nbsp;|&nbsp; SDK version: <strong id="fx-sdk-version">?</strong></p>
+      <p><small>Force a variation with
+        <code>?optimizely_force=FLAG_KEY:VARIATION_KEY</code> in the URL.</small></p>
+    </section>
+
+    <section class="section">
+      <h2>Hydration mismatch (simulated)</h2>
+      <!-- SIMULATED SSR/hydration mismatch: the "server" markup below says
+           "control", then client JS swaps it to the decided variation. On a real
+           SSR app this divergence is a hydration mismatch. TRUE SSR/hydration
+           testing needs a Next.js (or similar) host — GitHub Pages is static, so
+           this only *simulates* the class of bug for the QA pipeline. -->
+      <div id="ssr-slot" data-server-rendered="control">Server-rendered: control</div>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ---- CONFIG (placeholders — replace with your FX project's values) ------
+    var SDK_KEY = 'YOUR_FX_SDK_KEY';     // SDK fetches datafile from cdn.optimizely.com/datafiles/<SDK_KEY>.json
+    var FLAG_KEY = 'demo_flag';          // the flag to decide()
+    var USER_ID  = 'qa-visitor-001';     // stable id => consistent bucketing across pages/subdomains
+
+    // ---- FORCED-DECISION QUERY-PARAM HANDLER --------------------------------
+    // Reads ?optimizely_force=flag_key:variation_key and applies it via
+    // setForcedDecision() BEFORE decide(). This is the documented handler the
+    // QA agent looks for; if absent it should degrade gracefully with a finding.
+    function parseForcedDecision() {
+      var raw = new URLSearchParams(location.search).get('optimizely_force');
+      if (!raw || raw.indexOf(':') === -1) return null;
+      var parts = raw.split(':');
+      return { flagKey: parts[0], variationKey: parts[1] };
+    }
+
+    function render(text) { document.getElementById('fx-decision').textContent = text; }
+
+    if (!window.optimizelySdk) {
+      // Default/fallback experience when the SDK fails to load (CDN blocked, etc.)
+      render('SDK failed to load — showing fallback (control) experience.');
+    } else {
+      document.getElementById('fx-sdk-version').textContent =
+        (window.optimizelySdk.__internalResetState ? '' : '') ||
+        (window.optimizelySdk.enums ? 'loaded' : 'loaded');
+
+      var client = window.optimizelySdk.createInstance({ sdkKey: SDK_KEY });
+
+      client.onReady().then(function (res) {
+        // If the datafile is unreachable, onReady still resolves; guard decide().
+        try {
+          var user = client.createUserContext(USER_ID);
+
+          // Apply forced decision from the URL, if present.
+          var forced = parseForcedDecision();
+          if (forced && user.setForcedDecision) {
+            user.setForcedDecision(
+              { flagKey: forced.flagKey },
+              { variationKey: forced.variationKey }
+            );
+          }
+
+          var decision = user.decide(FLAG_KEY);
+          render('flag "' + decision.flagKey + '" → enabled=' + decision.enabled +
+                 ', variation=' + decision.variationKey +
+                 (forced ? ' (FORCED)' : ''));
+
+          // Variable validation: expose string/number/json variable values.
+          var vars = decision.variables || {};
+          var ul = document.getElementById('fx-variables');
+          Object.keys(vars).forEach(function (k) {
+            var li = document.createElement('li');
+            li.textContent = k + ' (' + typeof vars[k] + ') = ' + JSON.stringify(vars[k]);
+            ul.appendChild(li);
+          });
+
+          // Datafile freshness: current revision on the page vs stale CDN cache.
+          var cfg = client.getOptimizelyConfig && client.getOptimizelyConfig();
+          document.getElementById('fx-revision').textContent =
+            (cfg && cfg.revision) ? cfg.revision : 'unavailable';
+
+          // Simulated hydration mismatch: swap the "server" markup to the variation.
+          var slot = document.getElementById('ssr-slot');
+          if (slot && decision.variationKey) {
+            slot.textContent = 'Client-hydrated: ' + decision.variationKey;
+            slot.setAttribute('data-client-rendered', decision.variationKey);
+          }
+        } catch (e) {
+          render('decide() failed — datafile likely unreachable (fallback shown). ' + e.message);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

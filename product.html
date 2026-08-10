@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Testbed — Product</title>
+
+  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">QA Testbed</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <!-- This is a DISTINCT second page: use for URL targeting, page events, and funnel step 1. -->
+    <section class="hero">
+      <!-- Stable selector for URL-targeted changes -->
+      <h1 id="product-title">The Product</h1>
+      <p>A distinct page for URL-targeting, page-scoped events, and the top of the funnel.</p>
+      <img class="hero-img" src="https://picsum.photos/1600/700" width="100%" alt="Product image">
+    </section>
+
+    <section class="section">
+      <h2>Details</h2>
+      <p>One flat rate. No surprises. Cancel anytime.</p>
+      <!-- Funnel step 1 -> leads to checkout.html -->
+      <button id="add-cart" class="btn btn-primary" onclick="location.href='checkout.html'">Add to cart</button>
+      <a href="index.html" class="btn btn-secondary">Back to home</a>
+    </section>
+
+    <section class="section">
+      <h2>Specs</h2>
+      <p>Everything you need, nothing you don't.</p>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+</body>
+</html>

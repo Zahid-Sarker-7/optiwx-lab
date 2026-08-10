@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Testbed — Checkout</title>
+
+  <!-- Anti-flicker / hiding snippet placeholder: paste Optimizely's hiding snippet HERE, ABOVE the main snippet, to prevent FOOC. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <!-- PASTE YOUR OPTIMIZELY WEB SNIPPET HERE (synchronous, in <head>): <script src="https://cdn.optimizely.com/js/PROJECT_ID.js"></script> -->
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">QA Testbed</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <!-- Funnel END: this page is the final conversion step. -->
+    <section class="hero">
+      <h1 id="checkout-title">Checkout</h1>
+      <p>Review your order and complete your purchase.</p>
+    </section>
+
+    <section class="section">
+      <h2>Order summary</h2>
+      <p>1 × The Product — $49.99</p>
+
+      <!-- Revenue-value validation: data-revenue is a parseable, non-zero value
+           (dollars). Optimizely revenue is usually tracked in CENTS (4999).
+           QA agent must SKIP actually triggering this (revenue) and note it. -->
+      <button id="buy" class="btn btn-primary"
+              data-revenue="49.99" data-revenue-cents="4999" data-currency="USD">
+        Buy ($49.99)
+      </button>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+</body>
+</html>
