@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — Home</title>
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet, to prevent a flash of original content. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Shared top nav -->
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <!-- Heading with a stable id -->
+      <h1 id="hero-title">Everyday gear, thoughtfully made</h1>
+      <p>A small demo storefront with a mix of page elements for building and testing experiments.</p>
+
+      <!-- Primary call-to-action with a stable data-testid and class -->
+      <a data-testid="hero-cta" class="btn btn-primary" href="product.html">Shop the product</a>
+
+      <!-- Large above-the-fold banner image -->
+      <img id="hero-img" class="hero-img" src="https://picsum.photos/2000/800" width="100%" alt="Hero banner">
+    </section>
+
+    <!-- FEATURED -->
+    <section class="section">
+      <h2>Featured</h2>
+
+      <!-- A button whose class name looks auto-generated (hashed) -->
+      <button class="sc-1a2b3c4">Auto-generated class button</button>
+
+      <!-- A deeply nested block with no stable hook on the inner element -->
+      <section class="nested">
+        <div>
+          <div>
+            <span>Deeply nested label</span>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- DESKTOP HIGHLIGHTS -->
+    <section class="section">
+      <h2>Desktop highlights</h2>
+      <!-- Banner shown only on desktop; hidden under 640px via CSS -->
+      <div class="desktop-only">Desktop-only banner (display:none under 640px)</div>
+    </section>
+
+    <!-- ACTIONS -->
+    <section class="section">
+      <h2>Actions</h2>
+
+      <!-- Simple clickable button -->
+      <button id="cta-click" data-testid="cta-click" class="btn btn-secondary">Track this click</button>
+
+      <!-- Button that pushes an Optimizely custom event -->
+      <button id="custom-evt" class="btn btn-secondary"
+        onclick="window.optimizely = window.optimizely || []; window.optimizely.push({ type: 'event', eventName: 'custom_demo_event' });">
+        Fire custom_demo_event
+      </button>
+    </section>
+
+    <!-- DYNAMIC CONTENT -->
+    <section class="section">
+      <h2>Recommended for you</h2>
+      <!-- Slot filled by script ~1.5s after load -->
+      <div id="late-slot">Loading recommendations…</div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="section">
+      <h2>Sign up</h2>
+      <!-- Simple email sign-up form -->
+      <form id="signup" onsubmit="return false;">
+        <input type="email" name="email" placeholder="you@example.com" required>
+        <button type="submit" class="btn btn-primary">Sign up</button>
+      </form>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="section" id="a11y">
+      <h2>Gallery</h2>
+      <!-- Image without an alt attribute -->
+      <img id="a11y-img" src="https://picsum.photos/400/200" width="400">
+      <!-- Button with light-grey text on white (low contrast) -->
+      <button id="low-contrast" class="btn low-contrast">Low-contrast CTA</button>
+      <!-- Text input with no associated label -->
+      <p><input id="unlabeled" type="text" placeholder="Search products"></p>
+    </section>
+
+    <!-- ANNOUNCEMENTS: a separate script (mock-gtm.js) updates this text after load. -->
+    <section class="section" id="thirdparty">
+      <h2>Announcements</h2>
+      <p id="tp-target" data-owner="none">This text is updated by mock-gtm.js after load.</p>
+    </section>
+
+    <!-- Spacer keeps the footer below the fold -->
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <!-- Note that sits below the fold -->
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <!-- Fills #late-slot ~1.5s after load with #late-el -->
+  <script>
+    setTimeout(function () {
+      var slot = document.getElementById('late-slot');
+      if (slot) slot.innerHTML = '<span id="late-el">Handpicked for you</span>';
+    }, 1500);
+  </script>
+
+  <!-- A separate script that updates shared elements after load. -->
+  <script src="mock-gtm.js"></script>
+</body>
+</html>

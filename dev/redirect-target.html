@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — Redirect Target</title>
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <!-- Destination page for a redirect experiment. Point a redirect variation
+         at this page (e.g. index.html -> redirect-target.html). Enabling
+         "preserve query parameters" carries the original query string forward,
+         which is shown below. This page never redirects onward. -->
+    <section class="hero">
+      <h1 id="redirect-title">You landed on the redirect target</h1>
+      <p>If query params (including UTMs) are preserved, they appear below.</p>
+    </section>
+
+    <section class="section">
+      <h2>Query parameters received</h2>
+      <pre id="qp">(none)</pre>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Render the incoming query string so param preservation is observable.
+    // This page intentionally does not redirect anywhere.
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var lines = [];
+      params.forEach(function (v, k) { lines.push(k + ' = ' + v); });
+      document.getElementById('qp').textContent = lines.length ? lines.join('\n') : '(none)';
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — Product</title>
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <!-- A distinct second page, handy for URL-based targeting and page-scoped events. -->
+    <section class="hero">
+      <!-- Product heading with a stable id -->
+      <h1 id="product-title">The Product</h1>
+      <p>A distinct second page with its own heading and a path into the purchase flow.</p>
+      <img class="hero-img" src="https://picsum.photos/1600/700" width="100%" alt="Product image">
+    </section>
+
+    <section class="section">
+      <h2>Details</h2>
+      <p>One flat rate. No surprises. Cancel anytime.</p>
+      <!-- Continues to checkout.html -->
+      <button id="add-cart" class="btn btn-primary" onclick="location.href='checkout.html'">Add to cart</button>
+      <a href="index.html" class="btn btn-secondary">Back to home</a>
+    </section>
+
+    <section class="section">
+      <h2>Specs</h2>
+      <p>Everything you need, nothing you don't.</p>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+</body>
+</html>
