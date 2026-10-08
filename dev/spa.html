@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — SPA</title>
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1 id="spa-title">Single-page navigation</h1>
+      <p>Client-side routing via the URL hash (no full page reload).</p>
+
+      <!-- Hash-based routes. These never 404, even when the site is served
+           from a subpath, because the hash is not sent to the server. -->
+      <nav>
+        <a href="#/home" class="btn btn-secondary">#/home</a>
+        <a href="#/details" class="btn btn-secondary">#/details</a>
+      </nav>
+    </section>
+
+    <section class="section">
+      <h2>View</h2>
+      <!-- #view is swapped WITHOUT a page reload -->
+      <main id="view"><p>Pick a route above.</p></main>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Hash-based client-side router: swaps innerHTML of #view without a reload.
+    // Using the URL hash keeps routes working under any subpath.
+    function render(route) {
+      var view = document.getElementById('view');
+      var heading = route === '/details'
+        ? '<h3 id="details-heading">Details route</h3>'
+        : '<h3 id="home-heading">Home route</h3>';
+      view.innerHTML = heading +
+        '<p>Rendered client-side. No full page load happened.</p>' +
+        '<div id="late-slot">Loading…</div>';
+      // Content injected shortly after the route renders.
+      setTimeout(function () {
+        var slot = document.getElementById('late-slot');
+        if (slot) slot.innerHTML = '<span id="late-el">Loaded</span>';
+      }, 1200);
+    }
+
+    function currentRoute() {
+      return location.hash === '#/details' ? '/details' : '/home';
+    }
+
+    // Re-render on hash change (covers link clicks and back/forward).
+    window.addEventListener('hashchange', function () { render(currentRoute()); });
+
+    // Initial render.
+    render(currentRoute());
+  </script>
+</body>
+</html>

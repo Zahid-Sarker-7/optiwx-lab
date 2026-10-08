@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — Consent</title>
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+       CONSENT NOTE: In a real consent-gated setup you would typically hold the
+       snippet (or its events) until the visitor accepts, then release it. This
+       page mocks that gate so you can see how a page behaves before and after
+       consent is granted. -->
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1 id="consent-title">Consent-gated page</h1>
+      <p>Analytics and experimentation stay dormant until consent is accepted.</p>
+      <!-- Shows the current mock consent state. -->
+      <p>Consent status: <strong id="consent-status">pending</strong></p>
+    </section>
+
+    <section class="section">
+      <h2>Gated action</h2>
+      <!-- This button pushes an event only after consent has been granted. -->
+      <button id="gated-evt" class="btn btn-primary">Fire event (only if consented)</button>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <!-- Mock consent banner (starts visible until a choice is made) -->
+  <div id="cmp-banner" class="cmp-banner" role="dialog" aria-live="polite">
+    <span>We use cookies for experimentation &amp; analytics.</span>
+    <button id="cmp-accept" class="btn btn-primary">Accept</button>
+    <button id="cmp-reject" class="btn btn-secondary">Reject</button>
+  </div>
+
+  <script>
+    // Mock consent state. window.__consent gates whether analytics/experimentation runs.
+    window.__consent = 'pending';
+
+    function setConsent(state) {
+      window.__consent = state;
+      document.getElementById('consent-status').textContent = state;
+      document.getElementById('cmp-banner').style.display = 'none';
+      if (state === 'granted') {
+        // Only after consent would you release Optimizely / send events.
+        window.optimizely = window.optimizely || [];
+        window.optimizely.push({ type: 'event', eventName: 'consent_granted' });
+      }
+    }
+
+    document.getElementById('cmp-accept').onclick = function () { setConsent('granted'); };
+    document.getElementById('cmp-reject').onclick = function () { setConsent('denied'); };
+
+    document.getElementById('gated-evt').onclick = function () {
+      if (window.__consent !== 'granted') {
+        alert('Blocked: no consent yet.');
+        return;
+      }
+      window.optimizely = window.optimizely || [];
+      window.optimizely.push({ type: 'event', eventName: 'gated_demo_event' });
+    };
+  </script>
+</body>
+</html>

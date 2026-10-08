@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — CSP</title>
+
+  <!-- This page has a strict Content-Security-Policy. A strict CSP can block
+       injected scripts, inline handlers, and some connections. If page changes
+       behave differently here than on the Home page, the CSP is a likely cause. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.optimizely.com; img-src 'self' https://picsum.photos data:; style-src 'self' 'unsafe-inline';">
+
+  <!-- Optional: paste your Optimizely anti-flicker (hiding) snippet here, ABOVE the main snippet. -->
+  <!-- PASTE YOUR OPTIMIZELY ANTI-FLICKER (HIDING) SNIPPET HERE, BEFORE THE MAIN SNIPPET -->
+
+  <script src="https://cdn.optimizely.com/js/4737087795101696.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <!-- Same structure as the Home page, but under a strict CSP -->
+      <h1 id="hero-title">Everyday gear, thoughtfully made</h1>
+      <p>Identical to Home, but served with a strict Content-Security-Policy.</p>
+      <a data-testid="hero-cta" class="btn btn-primary" href="product.html">Shop the product</a>
+      <img id="hero-img" class="hero-img" src="https://picsum.photos/2000/800" width="100%" alt="Hero banner">
+    </section>
+
+    <section class="section">
+      <h2>Featured</h2>
+      <button class="sc-1a2b3c4">Auto-generated class button</button>
+      <section class="nested">
+        <div>
+          <div>
+            <span>Deeply nested label</span>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="section">
+      <h2>Desktop highlights</h2>
+      <div class="desktop-only">Desktop-only banner (display:none under 640px)</div>
+    </section>
+
+    <section class="section">
+      <h2>Actions</h2>
+      <button id="cta-click" data-testid="cta-click" class="btn btn-secondary">Track this click</button>
+      <!-- Note: inline onclick may be blocked under this CSP (no 'unsafe-inline' in script-src). -->
+      <button id="custom-evt" class="btn btn-secondary"
+        onclick="window.optimizely = window.optimizely || []; window.optimizely.push({ type: 'event', eventName: 'custom_demo_event' });">
+        Fire custom_demo_event
+      </button>
+    </section>
+
+    <section class="section">
+      <h2>Recommended for you</h2>
+      <div id="late-slot">Loading recommendations…</div>
+    </section>
+
+    <section class="section">
+      <h2>Sign up</h2>
+      <form id="signup" onsubmit="return false;">
+        <input type="email" name="email" placeholder="you@example.com" required>
+        <button type="submit" class="btn btn-primary">Sign up</button>
+      </form>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <!-- This external script is allowed by script-src 'self'.
+       If you inline it instead, the strict CSP will block it. -->
+  <script src="late-inject.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora Goods — Feature Experimentation (FX)</title>
+
+  <!-- Feature Experimentation uses the JavaScript SDK, not the Web snippet.
+       Loaded from a CDN below. Replace the SDK key placeholder with your own. -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Optimizely Feature Experimentation JS SDK (browser UMD build) via CDN.
+       Pinned to a major version; change this to try a different SDK version. -->
+  <script src="https://unpkg.com/@optimizely/optimizely-sdk@6/dist/optimizely.browser.umd.min.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <span class="brand">Aurora Goods</span>
+    <a href="index.html">Home</a>
+    <a href="product.html">Product</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="spa.html">SPA</a>
+    <a href="consent.html">Consent</a>
+    <a href="fx.html">FX</a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1 id="fx-title">Feature Experimentation</h1>
+      <p>Initializes the FX JS SDK, runs <code>decide()</code>, and renders a variation.</p>
+    </section>
+
+    <section class="section">
+      <h2>Decision</h2>
+      <!-- Rendered from decision.variationKey and its variables. -->
+      <div id="fx-decision">Initializing SDK…</div>
+      <ul id="fx-variables"></ul>
+      <p>Datafile revision: <strong id="fx-revision">?</strong>
+         &nbsp;|&nbsp; SDK version: <strong id="fx-sdk-version">?</strong></p>
+      <p><small>Force a variation with
+        <code>?optimizely_force=FLAG_KEY:VARIATION_KEY</code> in the URL.</small></p>
+    </section>
+
+    <section class="section">
+      <h2>Client render</h2>
+      <!-- The markup below starts as one value, then client JS swaps it to the
+           decided variation. This is a client-only demo. Genuine server-side
+           rendering and hydration would require an SSR host (e.g. Next.js);
+           GitHub Pages serves static files, so this only mimics the pattern. -->
+      <div id="ssr-slot" data-server-rendered="control">Initial: control</div>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p id="footer-note">Footer note — below the fold.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ---- CONFIG (placeholders — replace with your FX project's values) ------
+    var SDK_KEY = 'YOUR_FX_SDK_KEY';     // SDK fetches datafile from cdn.optimizely.com/datafiles/<SDK_KEY>.json
+    var FLAG_KEY = 'demo_flag';          // the flag to decide()
+    var USER_ID  = 'demo-visitor-001';   // stable id => consistent bucketing
+
+    // ---- FORCED-DECISION QUERY-PARAM HANDLER --------------------------------
+    // Reads ?optimizely_force=flag_key:variation_key and applies it via
+    // setForcedDecision() BEFORE decide(). If absent, decide() runs normally.
+    function parseForcedDecision() {
+      var raw = new URLSearchParams(location.search).get('optimizely_force');
+      if (!raw || raw.indexOf(':') === -1) return null;
+      var parts = raw.split(':');
+      return { flagKey: parts[0], variationKey: parts[1] };
+    }
+
+    function render(text) { document.getElementById('fx-decision').textContent = text; }
+
+    if (!window.optimizelySdk) {
+      // Fallback experience when the SDK fails to load (e.g. CDN blocked).
+      render('SDK failed to load — showing fallback (control) experience.');
+    } else {
+      document.getElementById('fx-sdk-version').textContent = 'loaded';
+
+      var client = window.optimizelySdk.createInstance({ sdkKey: SDK_KEY });
+
+      client.onReady().then(function (res) {
+        // If the datafile is unreachable, onReady still resolves; guard decide().
+        try {
+          var user = client.createUserContext(USER_ID);
+
+          // Apply forced decision from the URL, if present.
+          var forced = parseForcedDecision();
+          if (forced && user.setForcedDecision) {
+            user.setForcedDecision(
+              { flagKey: forced.flagKey },
+              { variationKey: forced.variationKey }
+            );
+          }
+
+          var decision = user.decide(FLAG_KEY);
+          render('flag "' + decision.flagKey + '" → enabled=' + decision.enabled +
+                 ', variation=' + decision.variationKey +
+                 (forced ? ' (FORCED)' : ''));
+
+          // Expose string/number/json variable values.
+          var vars = decision.variables || {};
+          var ul = document.getElementById('fx-variables');
+          Object.keys(vars).forEach(function (k) {
+            var li = document.createElement('li');
+            li.textContent = k + ' (' + typeof vars[k] + ') = ' + JSON.stringify(vars[k]);
+            ul.appendChild(li);
+          });
+
+          // Datafile revision currently loaded on the page.
+          var cfg = client.getOptimizelyConfig && client.getOptimizelyConfig();
+          document.getElementById('fx-revision').textContent =
+            (cfg && cfg.revision) ? cfg.revision : 'unavailable';
+
+          // Swap the initial markup to the decided variation (client-side).
+          var slot = document.getElementById('ssr-slot');
+          if (slot && decision.variationKey) {
+            slot.textContent = 'Client-rendered: ' + decision.variationKey;
+            slot.setAttribute('data-client-rendered', decision.variationKey);
+          }
+        } catch (e) {
+          render('decide() failed — datafile likely unreachable (fallback shown). ' + e.message);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
