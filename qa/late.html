@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>QA late element</title>
+<script src="https://cdn.optimizely.com/js/5495755429904384.js"></script></head>
+<body><h1 id="hero-title">QA late element</h1>
+<div id="late-container"></div>
+<p>A script inserts #late-cta 4 s after load, after QA's 2.5 s settle (CJS-13008).</p>
+<script>
+  setTimeout(function () {
+    document.getElementById('late-container').innerHTML = '<button id="late-cta">Late offer</button>';
+  }, 4000);
+</script></body></html>
